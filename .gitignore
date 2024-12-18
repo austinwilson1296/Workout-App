@@ -1,0 +1,5 @@
+.env
+fitted
+go.mod
+go.sum
+sqlc.yaml
