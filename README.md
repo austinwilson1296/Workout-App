@@ -6,7 +6,7 @@ Api to generate workouts for all levels of fitness experience.
 
 ## Usage
 
-- Create User
+### Create User
 
 ``` #bash
 
@@ -21,7 +21,7 @@ curl -X POST http://localhost:8080/api/users \
 
 ```
 
-- Login User
+### Login User
 
 ``` #bash
 curl -X POST http://localhost:8080/api/users \
@@ -32,29 +32,29 @@ curl -X POST http://localhost:8080/api/users \
   }' 
 ```
 
-- Generate WarmUp
+### Generate WarmUp
 
 >Level defines what exercises will be generated.
 >
 >Exercises are selected randomly and returned in the following order:
 
-1.Core Hips Legs
-2.Core Hips Legs
-3.Core Spinal
-4.Core Spinal
-5.Thoracic Spine Mobility
-6.Thoracic Spine Mobility
-7.Scapulo Thoracic
-8.Scapulo Thoracic
-9.Shoulders Scapula
-10.Shoulders Scapula
+1. Core Hips Legs
+2. Core Hips Legs
+3. Core Spinal
+4. Core Spinal
+5. Thoracic Spine Mobility
+6. Thoracic Spine Mobility
+7. Scapulo Thoracic
+8. Scapulo Thoracic
+9. Shoulders Scapula
+10. Shoulders Scapula
 
 ``` #bash
 curl http://localhost:8080/api/warmup?level=?
 
 ```
 
-- Generate Leg Exercise
+### Generate Leg Exercise
 
 >Generates lower body exercises based on provided level
 
