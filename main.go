@@ -5,12 +5,15 @@ import (
     "net/http"
     "os"
     "database/sql"
+    "embed"
     "github.com/austinwilson1296/fitted/routes"
     "github.com/austinwilson1296/fitted/internal/database"
     "github.com/austinwilson1296/fitted/config"
     _ "github.com/lib/pq"
     "github.com/joho/godotenv"
 )
+
+var staticFS embed.FS
 
 func main() {
     const port = "8080"
@@ -28,6 +31,10 @@ func main() {
     if platform == "" {
         log.Fatal("PLATFORM must be set")
     }
+    jwtSecretKey := os.Getenv("jwtSecret")
+	if jwtSecret == "" {
+		log.Fatal("JWT_SECRET environment variable is not set")
+	}
 
     dbConn, err := sql.Open("postgres", dbURL)
     if err != nil {
@@ -38,10 +45,13 @@ func main() {
     apiConfig := &config.ApiCfg{
         DB:        dbQueries,
         Platform:  platform,
+        jwtSecret: jwtSecretKey,
     }
+
 
     mux := http.NewServeMux()
     routes.RegisterRoutes(mux,apiConfig)
+    routes.ServeStaticFiles(mux)
 
     srv := &http.Server{
         Addr:    ":" + port,

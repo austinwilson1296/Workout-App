@@ -2,17 +2,33 @@ package config
 
 import (
 	"html/template"
+	"log"
 	"net/http"
 )
 
-func HandlerWorkOutPage(w http.ResponseWriter, r *http.Request){
-	tmpl, err := template.ParseFiles("templates/workout.html")
-	if err != nil {
-		panic(err)
+// Preload templates during application initialization
+var tmpl = template.Must(template.ParseGlob("templates/*.html"))
+
+func HandlerWorkOutPage(w http.ResponseWriter, r *http.Request) {
+	claims, err := auth.ParseAndValidateToken(w, r)
+    if err != nil {
+        return // If authentication fails, stop the handler execution
+    }
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
 	}
-	err = tmpl.Execute(w, nil)
-	if err != nil{
-		respondWithError(w, http.StatusInternalServerError, "could not execute template",err)
+
+	// Data to pass to the template (add dynamic data here)
+	data := map[string]interface{}{
+		"Title": "Workout Page",
+	}
+
+	// Execute the template with data
+	err := tmpl.ExecuteTemplate(w, "workout.html", data)
+	if err != nil {
+		log.Printf("Template execution error: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 }

@@ -4,10 +4,16 @@ import (
     "net/http"
     "github.com/austinwilson1296/fitted/internal/database"
     "strconv"
+    "github.com/austinwilson1296/fitted/internal/auth"
+    "context"
 )
 
-
 func (cfg *ApiCfg) HandlerGenerateWarmUp(w http.ResponseWriter, r *http.Request) {
+    claims, err := ParseAndValidateToken(w, r)
+    if err != nil {
+        return 
+    }
+
     // Get level from query parameter
     levelStr := r.URL.Query().Get("level")
     level, err := strconv.ParseInt(levelStr, 10, 32)
@@ -17,7 +23,6 @@ func (cfg *ApiCfg) HandlerGenerateWarmUp(w http.ResponseWriter, r *http.Request)
     }
     var limit int32 = 2
     levelInt := int32(level)
-    ctx := r.Context()
 
     // Get Exercises for each category
     coreHipsLegs, err := cfg.DB.GetCoreHipsLegsExercises(ctx, database.GetCoreHipsLegsExercisesParams{

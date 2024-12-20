@@ -4,9 +4,17 @@ import (
     "net/http"
 	"strconv"
     "github.com/austinwilson1296/fitted/internal/database"
+    "github.com/austinwilson1296/fitted/internal/auth"
+    "context"
 )
 
 func (cfg *ApiCfg) HandlerGenerateMainExercise(w http.ResponseWriter, r *http.Request) {
+    claims, err := ParseAndValidateToken(w, r)
+    if err != nil {
+        return
+    }
+
+    // Get the query parameters
     levelStr := r.URL.Query().Get("level")
     level, err := strconv.ParseInt(levelStr, 10, 32)
     if err != nil {
@@ -14,23 +22,27 @@ func (cfg *ApiCfg) HandlerGenerateMainExercise(w http.ResponseWriter, r *http.Re
         return
     }
     name := r.URL.Query().Get("name")
-    if name == ""{
+    if name == "" {
         respondWithError(w, http.StatusBadRequest, "Missing required parameter: name", nil)
         return
     }
-	type response struct{
+
+    // Prepare response structure
+    type response struct {
 		Exercise
 	}
     
-    exercise, err := cfg.DB.GetMainExercise(r.Context(), database.GetMainExerciseParams{
-        Name: name,
+    // Get the exercise details from the database
+    exercise, err := cfg.DB.GetMainExercise(ctx, database.GetMainExerciseParams{
+        Name:    name,
         LevelID: int32(level),
     })
     if err != nil {
-        respondWithError(w, http.StatusInternalServerError, "could not locate exercise", err)
+        respondWithError(w, http.StatusInternalServerError, "Could not locate exercise", err)
         return
     }
     
+    // Return the exercise details in the response
     respondWithJSON(w, http.StatusOK, response{
         Exercise: Exercise{
             ExerciseID:   exercise.ExerciseID,

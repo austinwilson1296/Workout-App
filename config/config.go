@@ -11,6 +11,7 @@ type ApiCfg struct {
     Platform  string
     JwtSecret string
     DB        *database.Queries
+    
 }
 
 type Exercise struct {
