@@ -117,7 +117,7 @@ func (q *Queries) GetCoreSpinalExercises(ctx context.Context, arg GetCoreSpinalE
 	return items, nil
 }
 
-const getLegExercises = `-- name: GetLegExercises :one
+const getMainExercise = `-- name: GetMainExercise :one
 SELECT 
     e.id AS exercise_id,
     e.name AS exercise_name,
@@ -131,21 +131,26 @@ JOIN
 JOIN
     exercise_level_mapping elm ON e.id = elm.exercise_id
 WHERE
-    eg.name = 'legs'
-AND elm.level_id = $1
+    eg.name = $1
+AND elm.level_id = $2
 ORDER BY RANDOM()
 LIMIT 1
 `
 
-type GetLegExercisesRow struct {
+type GetMainExerciseParams struct {
+	Name    string
+	LevelID int32
+}
+
+type GetMainExerciseRow struct {
 	ExerciseID   int32
 	ExerciseName string
 	CategoryName string
 }
 
-func (q *Queries) GetLegExercises(ctx context.Context, levelID int32) (GetLegExercisesRow, error) {
-	row := q.db.QueryRowContext(ctx, getLegExercises, levelID)
-	var i GetLegExercisesRow
+func (q *Queries) GetMainExercise(ctx context.Context, arg GetMainExerciseParams) (GetMainExerciseRow, error) {
+	row := q.db.QueryRowContext(ctx, getMainExercise, arg.Name, arg.LevelID)
+	var i GetMainExerciseRow
 	err := row.Scan(&i.ExerciseID, &i.ExerciseName, &i.CategoryName)
 	return i, err
 }

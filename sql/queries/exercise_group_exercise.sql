@@ -93,7 +93,7 @@ WHERE
 ORDER BY RANDOM()
 LIMIT $2;
 
--- name: GetLegExercises :one
+-- name: GetMainExercise :one
 SELECT 
     e.id AS exercise_id,
     e.name AS exercise_name,
@@ -107,7 +107,8 @@ JOIN
 JOIN
     exercise_level_mapping elm ON e.id = elm.exercise_id
 WHERE
-    eg.name = 'legs'
-AND elm.level_id = $1
+    eg.name = $1
+AND elm.level_id = $2
 ORDER BY RANDOM()
 LIMIT 1;
+

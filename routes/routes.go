@@ -13,7 +13,8 @@ func RegisterRoutes(mux *http.ServeMux, cfg *config.ApiCfg) {
 
 	//Exercise Endpoints
 	mux.HandleFunc("GET /api/warmup", cfg.HandlerGenerateWarmUp)
-	mux.HandleFunc("GET /api/legs", cfg.HandlerGenerateLegExercise)
+	mux.HandleFunc("GET /api/exercise", cfg.HandlerGenerateMainExercise)
+
 
 	// HTML page endpoints
 	mux.HandleFunc("GET /", config.HandlerHomePage)

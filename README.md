@@ -50,15 +50,13 @@ curl -X POST http://localhost:8080/api/users \
 10. Shoulders Scapula
 
 ``` #bash
-curl http://localhost:8080/api/warmup?level=?
-
+curl http://localhost:8080/api/warmup?level=1
 ```
 
-### Generate Leg Exercise
+### Generate Main Exercise
 
->Generates lower body exercises based on provided level
+>Generates exercise based on provided level and body part
 
 ``` #bash
-curl http://localhost:8080/api/legs?level=1
-
+curl http://localhost:8080/api/exercise?level=1&name=chest
 ```
