@@ -9,61 +9,262 @@ import (
 	"context"
 )
 
-const getExercisesPerCategoryByExperience = `-- name: GetExercisesPerCategoryByExperience :many
-WITH RankedExercises AS (
-    SELECT 
-        e.id AS exercise_id,
-        e.name AS exercise_name,
-        eg.name AS category_name,
-        RANDOM() AS random_sort
-    FROM 
-        exercise e
-    JOIN 
-        exercise_group_exercise ege ON e.id = ege.exercise_id
-    JOIN 
-        exercise_group eg ON ege.group_id = eg.id
-    JOIN 
-        exercise_level_mapping elm ON e.id = elm.exercise_id
-    WHERE 
-        eg.name IN ('core_hips_legs', 'core_spinal', 'thoracic_spine_mobility', 'scapulo_thoracic', 'shoulders_scapula')
-        AND elm.level_id = $1
-    ORDER BY 
-        random_sort
-    LIMIT $2 * (SELECT COUNT(DISTINCT name) FROM exercise_group WHERE name IN ('core_hips_legs', 'core_spinal', 'thoracic_spine_mobility', 'scapulo_thoracic', 'shoulders_scapula'))
-)
+const getCoreHipsLegsExercises = `-- name: GetCoreHipsLegsExercises :many
 SELECT 
-    exercise_id,
-    exercise_name,
-    category_name
+    e.id AS exercise_id,
+    e.name AS exercise_name,
+    eg.name AS category_name
 FROM 
-    RankedExercises
-GROUP BY 
-    category_name, 
-    exercise_id, 
-    exercise_name
+    exercise e
+JOIN 
+    exercise_group_exercise ege ON e.id = ege.exercise_id
+JOIN 
+    exercise_group eg ON ege.group_id = eg.id
+JOIN 
+    exercise_level_mapping elm ON e.id = elm.exercise_id
+WHERE 
+    eg.name = 'core_hips_legs'
+    AND elm.level_id = $1
+ORDER BY RANDOM()
 LIMIT $2
 `
 
-type GetExercisesPerCategoryByExperienceParams struct {
+type GetCoreHipsLegsExercisesParams struct {
 	LevelID int32
 	Limit   int32
 }
 
-type GetExercisesPerCategoryByExperienceRow struct {
+type GetCoreHipsLegsExercisesRow struct {
 	ExerciseID   int32
 	ExerciseName string
 	CategoryName string
 }
 
-func (q *Queries) GetExercisesPerCategoryByExperience(ctx context.Context, arg GetExercisesPerCategoryByExperienceParams) ([]GetExercisesPerCategoryByExperienceRow, error) {
-	rows, err := q.db.QueryContext(ctx, getExercisesPerCategoryByExperience, arg.LevelID, arg.Limit)
+func (q *Queries) GetCoreHipsLegsExercises(ctx context.Context, arg GetCoreHipsLegsExercisesParams) ([]GetCoreHipsLegsExercisesRow, error) {
+	rows, err := q.db.QueryContext(ctx, getCoreHipsLegsExercises, arg.LevelID, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetExercisesPerCategoryByExperienceRow
+	var items []GetCoreHipsLegsExercisesRow
 	for rows.Next() {
-		var i GetExercisesPerCategoryByExperienceRow
+		var i GetCoreHipsLegsExercisesRow
+		if err := rows.Scan(&i.ExerciseID, &i.ExerciseName, &i.CategoryName); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getCoreSpinalExercises = `-- name: GetCoreSpinalExercises :many
+SELECT 
+    e.id AS exercise_id,
+    e.name AS exercise_name,
+    eg.name AS category_name
+FROM 
+    exercise e
+JOIN 
+    exercise_group_exercise ege ON e.id = ege.exercise_id
+JOIN 
+    exercise_group eg ON ege.group_id = eg.id
+JOIN 
+    exercise_level_mapping elm ON e.id = elm.exercise_id
+WHERE 
+    eg.name = 'core_spinal'
+    AND elm.level_id = $1
+ORDER BY RANDOM()
+LIMIT $2
+`
+
+type GetCoreSpinalExercisesParams struct {
+	LevelID int32
+	Limit   int32
+}
+
+type GetCoreSpinalExercisesRow struct {
+	ExerciseID   int32
+	ExerciseName string
+	CategoryName string
+}
+
+func (q *Queries) GetCoreSpinalExercises(ctx context.Context, arg GetCoreSpinalExercisesParams) ([]GetCoreSpinalExercisesRow, error) {
+	rows, err := q.db.QueryContext(ctx, getCoreSpinalExercises, arg.LevelID, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetCoreSpinalExercisesRow
+	for rows.Next() {
+		var i GetCoreSpinalExercisesRow
+		if err := rows.Scan(&i.ExerciseID, &i.ExerciseName, &i.CategoryName); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getScapuloThoracicExercises = `-- name: GetScapuloThoracicExercises :many
+SELECT 
+    e.id AS exercise_id,
+    e.name AS exercise_name,
+    eg.name AS category_name
+FROM 
+    exercise e
+JOIN 
+    exercise_group_exercise ege ON e.id = ege.exercise_id
+JOIN 
+    exercise_group eg ON ege.group_id = eg.id
+JOIN 
+    exercise_level_mapping elm ON e.id = elm.exercise_id
+WHERE 
+    eg.name = 'scapulo_thoracic'
+    AND elm.level_id = $1
+ORDER BY RANDOM()
+LIMIT $2
+`
+
+type GetScapuloThoracicExercisesParams struct {
+	LevelID int32
+	Limit   int32
+}
+
+type GetScapuloThoracicExercisesRow struct {
+	ExerciseID   int32
+	ExerciseName string
+	CategoryName string
+}
+
+func (q *Queries) GetScapuloThoracicExercises(ctx context.Context, arg GetScapuloThoracicExercisesParams) ([]GetScapuloThoracicExercisesRow, error) {
+	rows, err := q.db.QueryContext(ctx, getScapuloThoracicExercises, arg.LevelID, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetScapuloThoracicExercisesRow
+	for rows.Next() {
+		var i GetScapuloThoracicExercisesRow
+		if err := rows.Scan(&i.ExerciseID, &i.ExerciseName, &i.CategoryName); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getShouldersScapulaExercises = `-- name: GetShouldersScapulaExercises :many
+SELECT 
+    e.id AS exercise_id,
+    e.name AS exercise_name,
+    eg.name AS category_name
+FROM 
+    exercise e
+JOIN 
+    exercise_group_exercise ege ON e.id = ege.exercise_id
+JOIN 
+    exercise_group eg ON ege.group_id = eg.id
+JOIN 
+    exercise_level_mapping elm ON e.id = elm.exercise_id
+WHERE 
+    eg.name = 'shoulders_scapula'
+    AND elm.level_id = $1
+ORDER BY RANDOM()
+LIMIT $2
+`
+
+type GetShouldersScapulaExercisesParams struct {
+	LevelID int32
+	Limit   int32
+}
+
+type GetShouldersScapulaExercisesRow struct {
+	ExerciseID   int32
+	ExerciseName string
+	CategoryName string
+}
+
+func (q *Queries) GetShouldersScapulaExercises(ctx context.Context, arg GetShouldersScapulaExercisesParams) ([]GetShouldersScapulaExercisesRow, error) {
+	rows, err := q.db.QueryContext(ctx, getShouldersScapulaExercises, arg.LevelID, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetShouldersScapulaExercisesRow
+	for rows.Next() {
+		var i GetShouldersScapulaExercisesRow
+		if err := rows.Scan(&i.ExerciseID, &i.ExerciseName, &i.CategoryName); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getThoracicSpineMobilityExercises = `-- name: GetThoracicSpineMobilityExercises :many
+SELECT 
+    e.id AS exercise_id,
+    e.name AS exercise_name,
+    eg.name AS category_name
+FROM 
+    exercise e
+JOIN 
+    exercise_group_exercise ege ON e.id = ege.exercise_id
+JOIN 
+    exercise_group eg ON ege.group_id = eg.id
+JOIN 
+    exercise_level_mapping elm ON e.id = elm.exercise_id
+WHERE 
+    eg.name = 'thoracic_spine_mobility'
+    AND elm.level_id = $1
+ORDER BY RANDOM()
+LIMIT $2
+`
+
+type GetThoracicSpineMobilityExercisesParams struct {
+	LevelID int32
+	Limit   int32
+}
+
+type GetThoracicSpineMobilityExercisesRow struct {
+	ExerciseID   int32
+	ExerciseName string
+	CategoryName string
+}
+
+func (q *Queries) GetThoracicSpineMobilityExercises(ctx context.Context, arg GetThoracicSpineMobilityExercisesParams) ([]GetThoracicSpineMobilityExercisesRow, error) {
+	rows, err := q.db.QueryContext(ctx, getThoracicSpineMobilityExercises, arg.LevelID, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetThoracicSpineMobilityExercisesRow
+	for rows.Next() {
+		var i GetThoracicSpineMobilityExercisesRow
 		if err := rows.Scan(&i.ExerciseID, &i.ExerciseName, &i.CategoryName); err != nil {
 			return nil, err
 		}
