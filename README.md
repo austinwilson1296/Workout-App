@@ -1,11 +1,64 @@
 # Fitted API
 
-## TO DO
+## Project Description
 
-[ ] Create user auth
+Api to generate workouts for all levels of fitness experience.
 
-[ ] Define workout levels. 
+## Usage
 
-[ ] Define structs for exercises.
+- Create User
 
-[ ] Cry
+``` #bash
+
+curl -X POST http://localhost:8080/api/users \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "test@example.com",
+    "username": "testuser",
+    "password": "password123",
+    "experience_level_id": 2
+  }' 
+
+```
+
+- Login User
+
+``` #bash
+curl -X POST http://localhost:8080/api/users \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "testuser",
+    "password": "password123",
+  }' 
+```
+
+- Generate WarmUp
+
+>Level defines what exercises will be generated.
+>
+>Exercises are selected randomly and returned in the following order:
+
+1.Core Hips Legs
+2.Core Hips Legs
+3.Core Spinal
+4.Core Spinal
+5.Thoracic Spine Mobility
+6.Thoracic Spine Mobility
+7.Scapulo Thoracic
+8.Scapulo Thoracic
+9.Shoulders Scapula
+10.Shoulders Scapula
+
+``` #bash
+curl http://localhost:8080/api/warmup?level=?
+
+```
+
+- Generate Leg Exercise
+
+>Generates lower body exercises based on provided level
+
+``` #bash
+curl http://localhost:8080/api/legs?level=1
+
+```

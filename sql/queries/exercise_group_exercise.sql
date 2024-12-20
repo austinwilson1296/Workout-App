@@ -92,3 +92,22 @@ WHERE
     AND elm.level_id = $1
 ORDER BY RANDOM()
 LIMIT $2;
+
+-- name: GetLegExercises :one
+SELECT 
+    e.id AS exercise_id,
+    e.name AS exercise_name,
+    eg.name AS category_name
+FROM
+    exercise e
+JOIN
+    exercise_group_exercise ege ON e.id = ege.exercise_id
+JOIN
+    exercise_group eg ON ege.group_id = eg.id
+JOIN
+    exercise_level_mapping elm ON e.id = elm.exercise_id
+WHERE
+    eg.name = 'legs'
+AND elm.level_id = $1
+ORDER BY RANDOM()
+LIMIT 1;

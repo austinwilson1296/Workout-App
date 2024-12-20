@@ -2,41 +2,30 @@ package config
 
 import (
     "net/http"
-    "encoding/json"
     "github.com/austinwilson1296/fitted/internal/database"
+    "strconv"
 )
 
-type warmUp struct {
-    ExerciseID   int32  `json:"id"`
-    ExerciseName string `json:"exercise_name"`
-    CategoryName string `json:"category_name"`
-}
 
 func (cfg *ApiCfg) HandlerGenerateWarmUp(w http.ResponseWriter, r *http.Request) {
-    type parameters struct {
-        Level int32 `json:"level"`
-    }
-
-    var limit int32 = 2
-
-    decoder := json.NewDecoder(r.Body)
-    params := parameters{}
-    err := decoder.Decode(&params)
+    // Get level from query parameter
+    levelStr := r.URL.Query().Get("level")
+    level, err := strconv.ParseInt(levelStr, 10, 32)
     if err != nil {
-        respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters", err)
+        respondWithError(w, http.StatusBadRequest, "Invalid level parameter", err)
         return
     }
-
-    levelInt := params.Level
+    var limit int32 = 2
+    levelInt := int32(level)
     ctx := r.Context()
 
-    // Get exercises for each category
+    // Get Exercises for each category
     coreHipsLegs, err := cfg.DB.GetCoreHipsLegsExercises(ctx, database.GetCoreHipsLegsExercisesParams{
         LevelID: levelInt,
         Limit:   limit,
     })
     if err != nil {
-        respondWithError(w, http.StatusInternalServerError, "Error fetching core hips legs exercises", err)
+        respondWithError(w, http.StatusInternalServerError, "Error fetching core hips legs Exercises", err)
         return
     }
 
@@ -45,7 +34,7 @@ func (cfg *ApiCfg) HandlerGenerateWarmUp(w http.ResponseWriter, r *http.Request)
         Limit:   limit,
     })
     if err != nil {
-        respondWithError(w, http.StatusInternalServerError, "Error fetching core spinal exercises", err)
+        respondWithError(w, http.StatusInternalServerError, "Error fetching core spinal Exercises", err)
         return
     }
 
@@ -54,7 +43,7 @@ func (cfg *ApiCfg) HandlerGenerateWarmUp(w http.ResponseWriter, r *http.Request)
         Limit:   limit,
     })
     if err != nil {
-        respondWithError(w, http.StatusInternalServerError, "Error fetching thoracic spine exercises", err)
+        respondWithError(w, http.StatusInternalServerError, "Error fetching thoracic spine Exercises", err)
         return
     }
 
@@ -63,7 +52,7 @@ func (cfg *ApiCfg) HandlerGenerateWarmUp(w http.ResponseWriter, r *http.Request)
         Limit:   limit,
     })
     if err != nil {
-        respondWithError(w, http.StatusInternalServerError, "Error fetching scapulo thoracic exercises", err)
+        respondWithError(w, http.StatusInternalServerError, "Error fetching scapulo thoracic Exercises", err)
         return
     }
 
@@ -72,16 +61,16 @@ func (cfg *ApiCfg) HandlerGenerateWarmUp(w http.ResponseWriter, r *http.Request)
         Limit:   limit,
     })
     if err != nil {
-        respondWithError(w, http.StatusInternalServerError, "Error fetching shoulders scapula exercises", err)
+        respondWithError(w, http.StatusInternalServerError, "Error fetching shoulders scapula Exercises", err)
         return
     }
 
-    // Combine all exercises
-    returnWarmUp := []warmUp{}
+    // Combine all Exercises
+    returnWarmUp := []Exercise{}
     
-    // Add exercises from each category
+    // Add Exercises from each category
     for _, item := range coreHipsLegs {
-        returnWarmUp = append(returnWarmUp, warmUp{
+        returnWarmUp = append(returnWarmUp, Exercise{
             ExerciseID:   item.ExerciseID,
             ExerciseName: item.ExerciseName,
             CategoryName: item.CategoryName,
@@ -89,7 +78,7 @@ func (cfg *ApiCfg) HandlerGenerateWarmUp(w http.ResponseWriter, r *http.Request)
     }
     
     for _, item := range coreSpinal {
-        returnWarmUp = append(returnWarmUp, warmUp{
+        returnWarmUp = append(returnWarmUp, Exercise{
             ExerciseID:   item.ExerciseID,
             ExerciseName: item.ExerciseName,
             CategoryName: item.CategoryName,
@@ -97,7 +86,7 @@ func (cfg *ApiCfg) HandlerGenerateWarmUp(w http.ResponseWriter, r *http.Request)
     }
     
     for _, item := range thoracicSpine {
-        returnWarmUp = append(returnWarmUp, warmUp{
+        returnWarmUp = append(returnWarmUp, Exercise{
             ExerciseID:   item.ExerciseID,
             ExerciseName: item.ExerciseName,
             CategoryName: item.CategoryName,
@@ -105,7 +94,7 @@ func (cfg *ApiCfg) HandlerGenerateWarmUp(w http.ResponseWriter, r *http.Request)
     }
     
     for _, item := range scapuloThoracic {
-        returnWarmUp = append(returnWarmUp, warmUp{
+        returnWarmUp = append(returnWarmUp, Exercise{
             ExerciseID:   item.ExerciseID,
             ExerciseName: item.ExerciseName,
             CategoryName: item.CategoryName,
@@ -113,7 +102,7 @@ func (cfg *ApiCfg) HandlerGenerateWarmUp(w http.ResponseWriter, r *http.Request)
     }
     
     for _, item := range shouldersScapula {
-        returnWarmUp = append(returnWarmUp, warmUp{
+        returnWarmUp = append(returnWarmUp, Exercise{
             ExerciseID:   item.ExerciseID,
             ExerciseName: item.ExerciseName,
             CategoryName: item.CategoryName,
