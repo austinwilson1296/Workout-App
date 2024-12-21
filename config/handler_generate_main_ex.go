@@ -4,16 +4,9 @@ import (
     "net/http"
 	"strconv"
     "github.com/austinwilson1296/fitted/internal/database"
-    "github.com/austinwilson1296/fitted/internal/auth"
-    "context"
 )
 
 func (cfg *ApiCfg) HandlerGenerateMainExercise(w http.ResponseWriter, r *http.Request) {
-    claims, err := ParseAndValidateToken(w, r)
-    if err != nil {
-        return
-    }
-
     // Get the query parameters
     levelStr := r.URL.Query().Get("level")
     level, err := strconv.ParseInt(levelStr, 10, 32)
@@ -33,7 +26,7 @@ func (cfg *ApiCfg) HandlerGenerateMainExercise(w http.ResponseWriter, r *http.Re
 	}
     
     // Get the exercise details from the database
-    exercise, err := cfg.DB.GetMainExercise(ctx, database.GetMainExerciseParams{
+    exercise, err := cfg.DB.GetMainExercise(r.Context(), database.GetMainExerciseParams{
         Name:    name,
         LevelID: int32(level),
     })

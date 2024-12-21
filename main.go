@@ -32,7 +32,7 @@ func main() {
         log.Fatal("PLATFORM must be set")
     }
     jwtSecretKey := os.Getenv("jwtSecret")
-	if jwtSecret == "" {
+	if jwtSecretKey == "" {
 		log.Fatal("JWT_SECRET environment variable is not set")
 	}
 
@@ -45,7 +45,7 @@ func main() {
     apiConfig := &config.ApiCfg{
         DB:        dbQueries,
         Platform:  platform,
-        jwtSecret: jwtSecretKey,
+        JwtSecret: jwtSecretKey,
     }
 
 

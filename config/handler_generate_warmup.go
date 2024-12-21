@@ -4,16 +4,9 @@ import (
     "net/http"
     "github.com/austinwilson1296/fitted/internal/database"
     "strconv"
-    "github.com/austinwilson1296/fitted/internal/auth"
-    "context"
 )
 
 func (cfg *ApiCfg) HandlerGenerateWarmUp(w http.ResponseWriter, r *http.Request) {
-    claims, err := ParseAndValidateToken(w, r)
-    if err != nil {
-        return 
-    }
-
     // Get level from query parameter
     levelStr := r.URL.Query().Get("level")
     level, err := strconv.ParseInt(levelStr, 10, 32)
@@ -25,7 +18,7 @@ func (cfg *ApiCfg) HandlerGenerateWarmUp(w http.ResponseWriter, r *http.Request)
     levelInt := int32(level)
 
     // Get Exercises for each category
-    coreHipsLegs, err := cfg.DB.GetCoreHipsLegsExercises(ctx, database.GetCoreHipsLegsExercisesParams{
+    coreHipsLegs, err := cfg.DB.GetCoreHipsLegsExercises(r.Context(), database.GetCoreHipsLegsExercisesParams{
         LevelID: levelInt,
         Limit:   limit,
     })
@@ -34,7 +27,7 @@ func (cfg *ApiCfg) HandlerGenerateWarmUp(w http.ResponseWriter, r *http.Request)
         return
     }
 
-    coreSpinal, err := cfg.DB.GetCoreSpinalExercises(ctx, database.GetCoreSpinalExercisesParams{
+    coreSpinal, err := cfg.DB.GetCoreSpinalExercises(r.Context(), database.GetCoreSpinalExercisesParams{
         LevelID: levelInt,
         Limit:   limit,
     })
@@ -43,7 +36,7 @@ func (cfg *ApiCfg) HandlerGenerateWarmUp(w http.ResponseWriter, r *http.Request)
         return
     }
 
-    thoracicSpine, err := cfg.DB.GetThoracicSpineMobilityExercises(ctx, database.GetThoracicSpineMobilityExercisesParams{
+    thoracicSpine, err := cfg.DB.GetThoracicSpineMobilityExercises(r.Context(), database.GetThoracicSpineMobilityExercisesParams{
         LevelID: levelInt,
         Limit:   limit,
     })
@@ -52,7 +45,7 @@ func (cfg *ApiCfg) HandlerGenerateWarmUp(w http.ResponseWriter, r *http.Request)
         return
     }
 
-    scapuloThoracic, err := cfg.DB.GetScapuloThoracicExercises(ctx, database.GetScapuloThoracicExercisesParams{
+    scapuloThoracic, err := cfg.DB.GetScapuloThoracicExercises(r.Context(), database.GetScapuloThoracicExercisesParams{
         LevelID: levelInt,
         Limit:   limit,
     })
@@ -61,7 +54,7 @@ func (cfg *ApiCfg) HandlerGenerateWarmUp(w http.ResponseWriter, r *http.Request)
         return
     }
 
-    shouldersScapula, err := cfg.DB.GetShouldersScapulaExercises(ctx, database.GetShouldersScapulaExercisesParams{
+    shouldersScapula, err := cfg.DB.GetShouldersScapulaExercises(r.Context(), database.GetShouldersScapulaExercisesParams{
         LevelID: levelInt,
         Limit:   limit,
     })

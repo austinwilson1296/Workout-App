@@ -10,10 +10,6 @@ import (
 var tmpl = template.Must(template.ParseGlob("templates/*.html"))
 
 func HandlerWorkOutPage(w http.ResponseWriter, r *http.Request) {
-	claims, err := auth.ParseAndValidateToken(w, r)
-    if err != nil {
-        return // If authentication fails, stop the handler execution
-    }
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
