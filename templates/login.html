@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Workout</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
+  
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .login-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    h1 {
+      color: #1a73e8;
+      margin: 0 0 1.5rem;
+      text-align: center;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #444;
+    }
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+    input:focus {
+      outline: none;
+      border-color: #1a73e8;
+    }
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      background: #1a73e8;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+    button:hover {
+      background: #1557b0;
+    }
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .forgot-password {
+      text-align: center;
+      margin-top: 1rem;
+    }
+    .forgot-password a {
+      color: #1a73e8;
+      text-decoration: none;
+    }
+    #login-message {
+      margin-top: 1rem;
+      text-align: center;
+      color: #d32f2f;
+    }
+    .loading {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+    .htmx-request .spinner {
+      display: inline-block;
+    }
+    .spinner {
+      display: none;
+      width: 1rem;
+      height: 1rem;
+      margin-left: 0.5rem;
+      border: 2px solid #fff;
+      border-top: 2px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h1>Login</h1>
+    <form id="login-form">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input 
+          type="text" 
+          id="username" 
+          name="username" 
+          required
+          autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password" 
+          required
+          autocomplete="current-password">
+      </div>
+      <button 
+        type="button"
+        hx-post="/api/login"
+        hx-include="[name='username'],[name='password']"
+        hx-indicator="#spinner"
+        hx-on::before-request="this.disabled = true"
+        hx-on::after-request="this.disabled = false"
+        hx-target="#login-message">
+        Sign In
+        <span id="spinner" class="spinner"></span>
+      </button>
+      <div id="login-message"></div>
+      <div class="forgot-password">
+        <a href="/forgot-password">Forgot password?</a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // Form validation and feedback
+    document.getElementById('login-form').addEventListener('htmx:beforeRequest', function(event) {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      
+      if (!username || !password) {
+        event.preventDefault();
+        document.getElementById('login-message').textContent = 'Please fill in all fields';
+        return;
+      }
+    });
+
+    document.getElementById('login-form').addEventListener('htmx:afterOnLoad', function(event) {
+      if (event.detail.xhr.status === 200) {
+        const redirectUrl = event.detail.xhr.getResponseHeader('HX-Redirect');
+        if (redirectUrl) {
+          window.location.href = redirectUrl; // Redirect the user
+        } else {
+          document.getElementById('login-message').textContent = 'Login successful, redirecting...';
+        }
+      }
+    });
+
+    // Handle login errors
+    document.body.addEventListener('htmx:responseError', function(event) {
+      const messageDiv = document.getElementById('login-message');
+      messageDiv.textContent = 'Login failed. Please check your credentials.';
+    });
+
+    // Clear error message when user starts typing
+    document.querySelectorAll('input').forEach(input => {
+      input.addEventListener('input', function() {
+        document.getElementById('login-message').textContent = '';
+      });
+    });
+  </script>
+</body>
+</html>
+

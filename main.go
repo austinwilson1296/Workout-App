@@ -51,7 +51,7 @@ func main() {
 
     mux := http.NewServeMux()
     routes.RegisterRoutes(mux,apiConfig)
-    routes.ServeStaticFiles(mux)
+    
 
     srv := &http.Server{
         Addr:    ":" + port,
