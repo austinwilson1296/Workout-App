@@ -2,45 +2,63 @@ package config
 
 import (
 	"net/http"
-	"fmt"
-	// "encoding/json"
+	"time"
 	"github.com/austinwilson1296/fitted/internal/auth"
+	"golang.org/x/time/rate"
 )
 
+var limiter = rate.NewLimiter(rate.Every(time.Second), 3) // 3 requests per second
+
 func (cfg *ApiCfg) HandlerLogin(w http.ResponseWriter, r *http.Request) {
-    fmt.Println("Login attempt received") // Add logging
+    if !limiter.Allow() {
+        respondWithError(w, http.StatusTooManyRequests, "Rate limit exceeded", nil)
+        return
+    }
 
     if err := r.ParseForm(); err != nil {
-        fmt.Println("Form parse error:", err) // Add logging
-        respondWithError(w, http.StatusBadRequest, "Invalid form data", nil)
+        respondWithError(w, http.StatusBadRequest, "Invalid form data", err)
         return
     }
 
     username := r.Form.Get("username")
     password := r.Form.Get("password")
-    fmt.Printf("Login attempt for username: %s\n", username) // Add logging
 
     if username == "" || password == "" {
-        fmt.Println("Empty username or password") // Add logging
         respondWithError(w, http.StatusBadRequest, "Username and password are required", nil)
         return
     }
 
     user, err := cfg.DB.GetUserByUsername(r.Context(), username)
     if err != nil {
-        fmt.Printf("Database error: %v\n", err) // Add logging
+        // Use same error message to prevent username enumeration
         respondWithError(w, http.StatusUnauthorized, "Invalid credentials", nil)
         return
     }
 
     if err := auth.CheckPasswordHash(password, user.PasswordHash); err != nil {
-        fmt.Printf("Password check failed: %v\n", err) // Add logging
         respondWithError(w, http.StatusUnauthorized, "Invalid credentials", nil)
         return
     }
 
-    fmt.Println("Login successful, redirecting") // Add logging
+    accessToken, err := auth.MakeJWT(user.ID, cfg.JwtSecret, time.Hour)
+    if err != nil {
+        respondWithError(w, http.StatusInternalServerError, "Error creating session", nil)
+        return
+    }
+
+    cookie := http.Cookie{
+        Name:     "jwt-token",
+        Value:    accessToken,
+        Path:     "/",
+        Secure:   true,
+        HttpOnly: true,
+        SameSite: http.SameSiteStrictMode,
+        MaxAge:   1200, // 20 minutes
+    }
+
+    http.SetCookie(w, &cookie)
     w.Header().Set("HX-Redirect", "/workout")
-    w.WriteHeader(http.StatusOK) // Respond with success
-    
+    w.WriteHeader(http.StatusOK)
 }
+
+    

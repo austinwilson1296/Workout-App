@@ -13,15 +13,15 @@ func RegisterRoutes(mux *http.ServeMux, cfg *config.ApiCfg) {
     // API Endpoints
     mux.HandleFunc("POST /api/users", cfg.HandlerCreateUser)
     mux.HandleFunc("POST /api/login", cfg.HandlerLogin)
-    mux.HandleFunc("GET /api/warmup", cfg.HandlerGenerateWarmUp)
-    mux.HandleFunc("GET /api/exercise", cfg.HandlerGenerateMainExercise)
+    mux.HandleFunc("GET /api/warmup", cfg.AuthMiddleware(cfg.HandlerGenerateWarmUp))
+    mux.HandleFunc("GET /api/exercise", cfg.AuthMiddleware(cfg.HandlerGenerateMainExercise))
 
     // HTML Pages
-    ServeHTMLPages(mux)
+    ServeHTMLPages(mux,cfg)
 }
 
-func ServeHTMLPages(mux *http.ServeMux) {
-    mux.HandleFunc("GET /", config.HandlerHomePage)
+func ServeHTMLPages(mux *http.ServeMux, cfg *config.ApiCfg) {
+    mux.HandleFunc("GET /", cfg.AuthMiddleware(config.HandlerHomePage))
     mux.HandleFunc("GET /login", config.HandlerLoginPage) 
-    mux.HandleFunc("GET /workout", config.HandlerWorkOutPage)
+    mux.HandleFunc("GET /workout", cfg.AuthMiddleware(config.HandlerWorkOutPage))
 }

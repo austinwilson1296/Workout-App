@@ -4,13 +4,14 @@ import (
 	"errors"
 	"fmt"
 	"time"
+	"context"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
 // HashPassword hashes the provided password using bcrypt.
-func HashPassword(password string) (string, error) {
+func HashPassword(password string) (string, error) { 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return "", err
@@ -43,23 +44,37 @@ func ValidateJWT(tokenString, tokenSecret string) (uuid.UUID, error) {
 		tokenString,
 		claims,
 		func(token *jwt.Token) (interface{}, error) {
+			fmt.Printf("Secret used for validation: %x\n", tokenSecret)
 			return []byte(tokenSecret), nil
 		},
 	)
-	if err != nil || !token.Valid {
-		return uuid.Nil, errors.New("invalid token")
+	if err != nil {
+		fmt.Printf("Parse error: %v\n", err)
+		return uuid.Nil, fmt.Errorf("invalid token: %w", err)
+	}
+	if !token.Valid {
+		return uuid.Nil, errors.New("token invalid")
 	}
 
-	// Validate claims
-	if claims.Issuer != "access_token" {
-		return uuid.Nil, errors.New("invalid token issuer")
-	}
-
+	fmt.Printf("Claims: %+v\n", claims)
+	
 	userID, err := uuid.Parse(claims.Subject)
 	if err != nil {
 		return uuid.Nil, fmt.Errorf("invalid user ID: %w", err)
 	}
 
 	return userID, nil
+}
+
+type contextKey string
+const userIDKey contextKey = "userID"
+
+func ContextWithUserID(ctx context.Context, userID uuid.UUID) context.Context {
+	return context.WithValue(ctx, userIDKey, userID)
+}
+
+func UserIDFromContext(ctx context.Context) (uuid.UUID, bool) {
+	userID, ok := ctx.Value(userIDKey).(uuid.UUID)
+	return userID, ok
 }
 
