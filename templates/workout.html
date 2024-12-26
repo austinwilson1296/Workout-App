@@ -1,117 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Workout</title>
-    <link rel="stylesheet" href="/static/css/style.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-  </head>
-  <body>
-    <div class="container-fluid">
-      <!-- Modal for Creating Workout -->
-      <div class="modal fade" id="create-workout-modal" tabindex="-1" role="dialog" aria-labelledby="create-workout-modalLabel" aria-modal="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header text-center">
-              <h5 class="modal-title w-100" id="create-workout-modalLabel">Choose Workout Level</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <!-- Dropdown for Experience Level -->
-              <div class="dropdown mb-3 text-center">
-                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Experience Level:</button>
-                <ul class="dropdown-menu">
-                  <li>
-                    <a class="dropdown-item" hx-get="workout/experience-level/beginner" hx-target="#partial-container" hx-swap="outerHTML">Beginner</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" hx-get="workout/experience-level/intermediate" hx-target="#partial-container" hx-swap="outerHTML">Intermediate</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" hx-get="workout/experience-level/advanced" hx-target="#partial-container" hx-swap="outerHTML">Advanced</a>
-                  </li>
-                </ul>
-              </div>
-    
-              <!-- HTMX Partial Render -->
-              <div id="partial-container"></div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-          </div>
-        </div>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Workout</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/htmx/1.9.10/htmx.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="d-flex justify-content-center pt-4">
+      <div class="col mx-2">
+        <button hx-get="/true-beginner-1"
+                hx-trigger="click"
+                hx-target="#workoutArea"
+                hx-swap="outerHTML"
+                value="1"
+                id="trueBeginner1">
+                True Beginner 1
+        </button>
       </div>
-    
-      <!-- Row for Timer and Create Workout Button -->
-      <div class="row my-5">
-        <div class="col-md-auto">
-          <button class="btn" data-bs-toggle="modal" data-bs-target="#create-workout-modal">Create Workout</button>
-          <br>
-          <button class="btn" id="startTimerBtn" style="margin-top: 15px;">Start Timer</button>
-          <button class="btn btn-danger mb-2" id="stopTimerBtn" style="display: none;">Stop Timer</button>
-          <div class="timer mt-3">Timer: <span id="timer-display">00:00:00</span></div>
-          
-        </div>
+      <div class="col mx-2">
+        <button hx-get="/true-beginner-2"
+                hx-trigger="click"
+                hx-target="#workoutArea"
+                hx-swap="innerHTML">
+                True Beginner 2
+        </button>
       </div>
-    <div id="workout-clipboard">
-         
+      <div class="col mx-2">
+        <button>Novice</button>
+      </div>
+      <div class="col mx-2">
+        <button>Intermediate</button>
+      </div>
+      <div class="col mx-2">
+        <button>Advanced</button>
       </div>
     </div>
-    
-    
-    
-    <script>
-      // Timer functionality
-      document.addEventListener("DOMContentLoaded", function () {
-        const timerDisplay = document.getElementById("timer-display");
-        const startTimerBtn = document.getElementById("startTimerBtn");
-        const stopTimerBtn = document.getElementById("stopTimerBtn");
-        let seconds = 0;
-        let timerInterval;
-    
-        // Function to update the timer display
-        function updateTimerDisplay() {
-          const hours = Math.floor(seconds / 3600);
-          const minutes = Math.floor((seconds % 3600) / 60);
-          const secs = seconds % 60;
-          timerDisplay.textContent = `${String(hours).padStart(2, "0")}:${String(
-            minutes
-          ).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
-        }
-    
-        // Function to start the timer
-        function startTimer() {
-          timerInterval = setInterval(function () {
-            seconds++;
-            updateTimerDisplay();
-          }, 1000);
-    
-          startTimerBtn.style.display = "none"; // Hide Start Timer button
-          stopTimerBtn.style.display = "inline-block"; // Show Stop Timer button
-        }
-    
-        // Function to stop the timer
-        function stopTimer() {
-          clearInterval(timerInterval);
-          timerInterval = null; // Reset timer interval
-          startTimerBtn.style.display = "inline-block"; // Show Start Timer button
-          stopTimerBtn.style.display = "none"; // Hide Stop Timer button
-        }
-    
-        // Event listener for the button to start the timer
-        startTimerBtn.addEventListener("click", function () {
-          if (!timerInterval) {
-            startTimer();
-          }
-        });
-    
-        // Event listener for the button to stop the timer
-        stopTimerBtn.addEventListener("click", stopTimer);
-      });
-    </script>
-  </body>
+  </div>
+  <div class="container mt-4" id="workoutArea">
+    <!-- Content loaded dynamically -->
+  </div>
+
+  <script src="static/js/scripts.js"></script>
+</body>
 </html>

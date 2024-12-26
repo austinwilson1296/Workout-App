@@ -11,7 +11,8 @@ func (cfg *ApiCfg) AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		cookie, err := r.Cookie("jwt-token")
 		if err != nil {
 			fmt.Printf("Cookie error: %v\n", err)
-			respondWithError(w, http.StatusUnauthorized, "No valid session found", nil)
+			// respondWithError(w, http.StatusUnauthorized, "No valid session found", nil)
+			http.Redirect(w,r,"/login",http.StatusSeeOther)
 			return
 		}
 
@@ -22,8 +23,7 @@ func (cfg *ApiCfg) AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		fmt.Printf("JWT validation error: %v\n", err)
 		
 		if err != nil {
-			respondWithError(w, http.StatusUnauthorized, "Invalid session", nil)
-			return
+			http.Redirect(w,r,"/login",http.StatusSeeOther)
 		}
 
 		ctx := auth.ContextWithUserID(r.Context(), userID)

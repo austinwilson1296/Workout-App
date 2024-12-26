@@ -16,6 +16,11 @@ func RegisterRoutes(mux *http.ServeMux, cfg *config.ApiCfg) {
     mux.HandleFunc("GET /api/warmup", cfg.AuthMiddleware(cfg.HandlerGenerateWarmUp))
     mux.HandleFunc("GET /api/exercise", cfg.AuthMiddleware(cfg.HandlerGenerateMainExercise))
 
+
+    //HTMX Routes
+    mux.HandleFunc("GET /true-beginner-1", cfg.AuthMiddleware(config.HandlerTrueBeginnerOne))
+
+
     // HTML Pages
     ServeHTMLPages(mux,cfg)
 }

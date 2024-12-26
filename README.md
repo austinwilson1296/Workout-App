@@ -2,7 +2,7 @@
 
 ## Project Description
 
-Api to generate workouts for all levels of fitness experience.
+Web app to generate workouts for all levels of fitness experience.
 
 ## Usage
 
