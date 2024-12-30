@@ -18,7 +18,7 @@ import (
 func main() {
     const port = "8080"
 
-    if os.Getenv("ENVIRONMENT") != "production" {
+    if os.Getenv("PLATFORM") != "production" {
         if err := godotenv.Load(); err != nil {
             log.Fatal("Error loading .env file")
         }
