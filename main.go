@@ -16,7 +16,6 @@ import (
 // var staticFS embed.FS
 
 func main() {
-    const port = "8080"
 
     if os.Getenv("PLATFORM") != "production" {
         if err := godotenv.Load(); err != nil {
@@ -24,7 +23,10 @@ func main() {
         }
     }
     
-
+    port := os.Getenv("PORT")
+    if port == ""{
+        port = "8080"
+    }
     dbURL := os.Getenv("DB_URL")
     if dbURL == "" {
         log.Fatal("DB_URL must be set")
