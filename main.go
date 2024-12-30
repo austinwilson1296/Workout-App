@@ -5,7 +5,7 @@ import (
     "net/http"
     "os"
     "database/sql"
-    "embed"
+    // "embed"
     "github.com/austinwilson1296/fitted/routes"
     "github.com/austinwilson1296/fitted/internal/database"
     "github.com/austinwilson1296/fitted/config"
@@ -13,14 +13,17 @@ import (
     "github.com/joho/godotenv"
 )
 
-var staticFS embed.FS
+// var staticFS embed.FS
 
 func main() {
     const port = "8080"
 
-    if err := godotenv.Load(); err != nil {
-        log.Fatal("Error loading .env file")
+    if os.Getenv("ENVIRONMENT") != "production" {
+        if err := godotenv.Load(); err != nil {
+            log.Fatal("Error loading .env file")
+        }
     }
+    
 
     dbURL := os.Getenv("DB_URL")
     if dbURL == "" {
