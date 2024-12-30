@@ -16,7 +16,7 @@ import (
 // var staticFS embed.FS
 
 func main() {
-
+//added db connections
     if os.Getenv("PLATFORM") != "production" {
         if err := godotenv.Load(); err != nil {
             log.Fatal("Error loading .env file")
