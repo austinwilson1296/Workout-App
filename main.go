@@ -32,6 +32,7 @@ func main() {
         log.Fatal("DB_URL must be set")
     }
 
+
     platform := os.Getenv("PLATFORM")
     if platform == "" {
         log.Fatal("PLATFORM must be set")
