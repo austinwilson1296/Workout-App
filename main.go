@@ -5,7 +5,7 @@ import (
     "net/http"
     "os"
     "database/sql"
-    // "embed"
+    "fmt"
     "github.com/austinwilson1296/fitted/routes"
     "github.com/austinwilson1296/fitted/internal/database"
     "github.com/austinwilson1296/fitted/config"
@@ -28,6 +28,7 @@ func main() {
         port = "8080"
     }
     dbURL := os.Getenv("DB_URL")
+    fmt.Printf("%s",dbURL)
     if dbURL == "" {
         log.Fatal("DB_URL must be set")
     }
