@@ -28,5 +28,6 @@ func RegisterRoutes(mux *http.ServeMux, cfg *config.ApiCfg) {
 func ServeHTMLPages(mux *http.ServeMux, cfg *config.ApiCfg) {
     mux.HandleFunc("GET /", cfg.AuthMiddleware(config.HandlerHomePage))
     mux.HandleFunc("GET /login", config.HandlerLoginPage) 
+    mux.HandleFunc("GET /logout",cfg.HandlerLogout)
     mux.HandleFunc("GET /workout", cfg.AuthMiddleware(config.HandlerWorkOutPage))
 }

@@ -44,7 +44,6 @@ func ValidateJWT(tokenString, tokenSecret string) (uuid.UUID, error) {
 		tokenString,
 		claims,
 		func(token *jwt.Token) (interface{}, error) {
-			fmt.Printf("Secret used for validation: %x\n", tokenSecret)
 			return []byte(tokenSecret), nil
 		},
 	)
@@ -56,7 +55,6 @@ func ValidateJWT(tokenString, tokenSecret string) (uuid.UUID, error) {
 		return uuid.Nil, errors.New("token invalid")
 	}
 
-	fmt.Printf("Claims: %+v\n", claims)
 	
 	userID, err := uuid.Parse(claims.Subject)
 	if err != nil {
