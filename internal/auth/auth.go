@@ -48,7 +48,6 @@ func ValidateJWT(tokenString, tokenSecret string) (uuid.UUID, error) {
 		},
 	)
 	if err != nil {
-		fmt.Printf("Parse error: %v\n", err)
 		return uuid.Nil, fmt.Errorf("invalid token: %w", err)
 	}
 	if !token.Valid {

@@ -4,6 +4,7 @@ import (
     "net/http"
     "github.com/austinwilson1296/fitted/internal/database"
     "strconv"
+    "sort"
 )
 
 func (cfg *ApiCfg) HandlerGenerateWarmUp(w http.ResponseWriter, r *http.Request) {
@@ -20,7 +21,7 @@ func (cfg *ApiCfg) HandlerGenerateWarmUp(w http.ResponseWriter, r *http.Request)
     // Get Exercises for each category
     coreHipsLegs, err := cfg.DB.GetCoreHipsLegsExercises(r.Context(), database.GetCoreHipsLegsExercisesParams{
         LevelID: levelInt,
-        Limit:   limit,
+        Limit:   4,
     })
     if err != nil {
         respondWithError(w, http.StatusInternalServerError, "Error fetching core hips legs Exercises", err)
@@ -38,7 +39,7 @@ func (cfg *ApiCfg) HandlerGenerateWarmUp(w http.ResponseWriter, r *http.Request)
 
     thoracicSpine, err := cfg.DB.GetThoracicSpineMobilityExercises(r.Context(), database.GetThoracicSpineMobilityExercisesParams{
         LevelID: levelInt,
-        Limit:   limit,
+        Limit:   3,
     })
     if err != nil {
         respondWithError(w, http.StatusInternalServerError, "Error fetching thoracic spine Exercises", err)
@@ -66,46 +67,68 @@ func (cfg *ApiCfg) HandlerGenerateWarmUp(w http.ResponseWriter, r *http.Request)
     // Combine all Exercises
     returnWarmUp := []Exercise{}
     
-    // Add Exercises from each category
-    for _, item := range coreHipsLegs {
+    coreHipLegPositions := []int{0, 3, 7, 10}
+    for i, place := range coreHipLegPositions {
+        if i < len(coreHipsLegs) { 
+            returnWarmUp = append(returnWarmUp, Exercise{
+                ExerciseID:   coreHipsLegs[i].ExerciseID,
+                ExerciseName: coreHipsLegs[i].ExerciseName,
+                CategoryName: coreHipsLegs[i].CategoryName,
+                ListPosition: place,
+            })
+        }
+    }
+
+    
+    coreSpinalPositions := []int{1, 4}
+    for i, place := range coreSpinalPositions {
+        if i < len(coreSpinal) {
+            returnWarmUp = append(returnWarmUp, Exercise{
+                ExerciseID:   coreSpinal[i].ExerciseID,
+                ExerciseName: coreSpinal[i].ExerciseName,
+                CategoryName: coreSpinal[i].CategoryName,
+                ListPosition: place,
+            })
+        }
+    }
+    thoracicSpinePositions := []int{2,5,9}
+    for i,place := range thoracicSpinePositions{
+        if i < len(thoracicSpine){
         returnWarmUp = append(returnWarmUp, Exercise{
-            ExerciseID:   item.ExerciseID,
-            ExerciseName: item.ExerciseName,
-            CategoryName: item.CategoryName,
+            ExerciseID:   thoracicSpine[i].ExerciseID,
+            ExerciseName: thoracicSpine[i].ExerciseName,
+            CategoryName: thoracicSpine[i].CategoryName,
+            ListPosition: place,
         })
+    }
     }
     
-    for _, item := range coreSpinal {
+    scapuloThoracicPositions := []int{6}
+    for i,place := range scapuloThoracicPositions{
+        if i < len(scapuloThoracic){
         returnWarmUp = append(returnWarmUp, Exercise{
-            ExerciseID:   item.ExerciseID,
-            ExerciseName: item.ExerciseName,
-            CategoryName: item.CategoryName,
+            ExerciseID:   scapuloThoracic[i].ExerciseID,
+            ExerciseName: scapuloThoracic[i].ExerciseName,
+            CategoryName: scapuloThoracic[i].CategoryName,
+            ListPosition: place,
         })
+    }
     }
     
-    for _, item := range thoracicSpine {
+    shouldersScapulaPositions := []int{8,11}
+    for i,place := range shouldersScapulaPositions{
+        if i < len(shouldersScapula){
         returnWarmUp = append(returnWarmUp, Exercise{
-            ExerciseID:   item.ExerciseID,
-            ExerciseName: item.ExerciseName,
-            CategoryName: item.CategoryName,
+            ExerciseID:   shouldersScapula[i].ExerciseID,
+            ExerciseName: shouldersScapula[i].ExerciseName,
+            CategoryName: shouldersScapula[i].CategoryName,
+            ListPosition: place,
         })
     }
-    
-    for _, item := range scapuloThoracic {
-        returnWarmUp = append(returnWarmUp, Exercise{
-            ExerciseID:   item.ExerciseID,
-            ExerciseName: item.ExerciseName,
-            CategoryName: item.CategoryName,
-        })
     }
-    
-    for _, item := range shouldersScapula {
-        returnWarmUp = append(returnWarmUp, Exercise{
-            ExerciseID:   item.ExerciseID,
-            ExerciseName: item.ExerciseName,
-            CategoryName: item.CategoryName,
-        })
-    }
+    sort.Slice(returnWarmUp, func(i, j int) bool {
+        return returnWarmUp[i].ListPosition < returnWarmUp[j].ListPosition
+    })
 
     // Respond with JSON data
     respondWithJSON(w, http.StatusOK, returnWarmUp)

@@ -18,6 +18,7 @@ type Exercise struct {
     ExerciseID   int32  `json:"id"`
     ExerciseName string `json:"exercise_name"`
     CategoryName string `json:"category_name"`
+    ListPosition int    `json:"list_position"` 
 }
 
 type User struct{
