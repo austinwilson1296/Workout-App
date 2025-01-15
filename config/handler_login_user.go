@@ -53,7 +53,7 @@ func (cfg *ApiCfg) HandlerLogin(w http.ResponseWriter, r *http.Request) {
         Secure:   true,
         HttpOnly: true,
         SameSite: http.SameSiteStrictMode,
-        MaxAge:   1200, // 20 minutes
+        MaxAge:   2000, 
     }
 
     http.SetCookie(w, &cookie)
