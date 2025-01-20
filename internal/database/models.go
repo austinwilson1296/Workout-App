@@ -12,14 +12,15 @@ import (
 )
 
 type Exercise struct {
-	ID          int32
-	Name        string
-	Description sql.NullString
-	Duration    sql.NullInt32
-	Repetitions sql.NullInt32
-	Sets        sql.NullInt32
-	CreatedAt   sql.NullTime
-	UpdatedAt   sql.NullTime
+	ID                  int32
+	Name                string
+	Description         sql.NullString
+	Duration            sql.NullInt32
+	Repetitions         sql.NullInt32
+	Sets                sql.NullInt32
+	CreatedAt           sql.NullTime
+	UpdatedAt           sql.NullTime
+	ExcludeFromCooldown sql.NullBool
 }
 
 type ExerciseGroup struct {
@@ -38,22 +39,10 @@ type ExerciseLevelMapping struct {
 	LevelID    int32
 }
 
-type ExerciseMuscleGroup struct {
-	ExerciseID    int32
-	MuscleGroupID int32
-}
-
 type ExperienceLevel struct {
 	ID          int32
 	Name        string
 	Description sql.NullString
-}
-
-type MuscleGroup struct {
-	ID        int32
-	Name      string
-	CreatedAt sql.NullTime
-	UpdatedAt sql.NullTime
 }
 
 type User struct {

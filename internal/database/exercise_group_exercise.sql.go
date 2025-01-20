@@ -25,6 +25,11 @@ JOIN
 WHERE 
     eg.name = 'core_hips_legs'
     AND elm.level_id = $1
+        AND (
+        ($3 = TRUE AND e.exclude_from_cooldown = TRUE) OR  
+        ($3 = FALSE AND e.exclude_from_cooldown = FALSE) OR 
+        $3 IS NULL  
+    )
 ORDER BY RANDOM()
 LIMIT $2
 `
@@ -32,6 +37,7 @@ LIMIT $2
 type GetCoreHipsLegsExercisesParams struct {
 	LevelID int32
 	Limit   int32
+	Column3 interface{}
 }
 
 type GetCoreHipsLegsExercisesRow struct {
@@ -41,7 +47,7 @@ type GetCoreHipsLegsExercisesRow struct {
 }
 
 func (q *Queries) GetCoreHipsLegsExercises(ctx context.Context, arg GetCoreHipsLegsExercisesParams) ([]GetCoreHipsLegsExercisesRow, error) {
-	rows, err := q.db.QueryContext(ctx, getCoreHipsLegsExercises, arg.LevelID, arg.Limit)
+	rows, err := q.db.QueryContext(ctx, getCoreHipsLegsExercises, arg.LevelID, arg.Limit, arg.Column3)
 	if err != nil {
 		return nil, err
 	}

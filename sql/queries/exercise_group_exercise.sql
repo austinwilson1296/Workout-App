@@ -14,6 +14,11 @@ JOIN
 WHERE 
     eg.name = 'core_hips_legs'
     AND elm.level_id = $1
+        AND (
+        ($3 = TRUE AND e.exclude_from_cooldown = TRUE) OR  
+        ($3 = FALSE AND e.exclude_from_cooldown = FALSE) OR 
+        $3 IS NULL  
+    )
 ORDER BY RANDOM()
 LIMIT $2;
 

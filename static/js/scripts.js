@@ -30,12 +30,44 @@ function fetchWarmUp(level, listId) {
         });
 }
 
+// fetches json data from api for warm ups and cooldowns
+function fetchCooldown(level, listId) {
+    const url = `/api/warmup?level=${level}`;
+
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            const listElement = document.querySelector(`#${listId}`);
+            if (!listElement) {
+                console.error(`Element with ID '${listId}' not found.`);
+                return;
+            }
+            listElement.innerHTML = ''; // Clear previous exercises
+
+            // Append each new exercise to the list
+            data.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.textContent = item.exercise_name;
+                listElement.appendChild(listItem);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching exercises:', error);
+            alert('Failed to load exercises. Please try again later.');
+        });
+}
+
 function trueBeginnerWarmUp() {
     fetchWarmUp(1, 'warm-up-list');
 }
 
 function trueBeginnerCoolDown() {
-    fetchWarmUp(1, 'coolDownList');
+    fetchCooldown(1, 'coolDownList');
 }
 
 function fetchMainExercise(level, listId, name) {

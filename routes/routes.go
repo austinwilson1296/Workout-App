@@ -14,6 +14,7 @@ func RegisterRoutes(mux *http.ServeMux, cfg *config.ApiCfg) {
     mux.HandleFunc("POST /api/users", cfg.HandlerCreateUser)
     mux.HandleFunc("POST /api/login", cfg.HandlerLogin)
     mux.HandleFunc("GET /api/warmup", cfg.AuthMiddleware(cfg.HandlerGenerateWarmUp))
+    mux.HandleFunc("GET /api/cooldown", cfg.AuthMiddleware(cfg.HandlerGenerateCoolDown))
     mux.HandleFunc("GET /api/exercise", cfg.AuthMiddleware(cfg.HandlerGenerateMainExercise))
 
 
