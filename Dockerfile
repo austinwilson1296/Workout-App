@@ -15,13 +15,6 @@ RUN go mod download
 # Copy the entire project
 COPY . .
 
-RUN go install github.com/pressly/goose/v3/cmd/goose@latest
-
-COPY start.sh .
-RUN chmod +x start.sh
-
-CMD ["./start.sh"]
-
 # Build the application
 RUN CGO_ENABLED=0 GOOS=linux go build -o fitted .
 
@@ -33,6 +26,9 @@ WORKDIR /app
 # Install necessary runtime dependencies
 RUN apk add --no-cache tzdata
 
+# Install goose
+RUN go install github.com/pressly/goose/v3/cmd/goose@latest
+
 # Copy binary from builder
 COPY --from=builder /app/fitted .
 
@@ -40,7 +36,12 @@ COPY --from=builder /app/fitted .
 COPY --from=builder /app/templates ./templates
 COPY --from=builder /app/static ./static
 COPY --from=builder /app/sql ./sql
+COPY --from=builder /app/migrations ./migrations
+
+# Copy and set up start script
+COPY start.sh .
+RUN chmod +x start.sh
 
 EXPOSE 8080
 
-CMD ["./fitted"]
+CMD ["./start.sh"]
