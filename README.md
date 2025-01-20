@@ -2,5 +2,11 @@
 
 ## Project Description
 
-Web app to generate workouts for all levels of fitness experience.
+Fitness application for all skill levels!
+
+## Features
+
+No hassle workout creation.
+Simplistic design and straight to the point.
+automatic generated exercises based on skill level. 
 
