@@ -10,4 +10,4 @@ No hassle workout creation.
 Simplistic design and straight to the point.
 automatic generated exercises based on skill level. 
 
-
+FITTED
