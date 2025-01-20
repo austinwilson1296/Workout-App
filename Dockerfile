@@ -39,9 +39,9 @@ COPY --from=builder /app/sql ./sql
 COPY --from=builder /app/migrations ./migrations
 
 # Copy and set up start script
-COPY start.sh .
-RUN chmod +x start.sh
+COPY db_migrations.sh .
+RUN chmod +x db_migrations.sh
 
 EXPOSE 8080
 
-CMD ["./start.sh"]
+CMD ["./fitted"]
