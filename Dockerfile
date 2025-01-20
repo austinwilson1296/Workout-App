@@ -38,7 +38,7 @@ COPY --from=builder /app/fitted .
 COPY --from=builder /app/templates ./templates
 COPY --from=builder /app/static ./static
 COPY --from=builder /app/sql ./sql
-COPY --from=builder /app/migrations ./migrations
+
 
 # Copy and set up start script
 COPY db_migrations.sh .
