@@ -39,9 +39,9 @@ COPY --from=builder /app/sql ./sql
 COPY --from=builder /app/scripts ./scripts
 
 # Ensure db_migrations script is executable
-# RUN chmod +x ./scripts/db_migrations
+RUN chmod +x ./scripts/db_migration.sh
 
 EXPOSE 8080
 
 # Run migrations and start the application
-CMD ["sh", "-c", "./scripts/db_migrations && ./fitted"]
+CMD ["sh", "-c", "./scripts/db_migration && ./fitted"]
