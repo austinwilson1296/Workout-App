@@ -15,6 +15,13 @@ RUN go mod download
 # Copy the entire project
 COPY . .
 
+RUN go install github.com/pressly/goose/v3/cmd/goose@latest
+
+COPY start.sh .
+RUN chmod +x start.sh
+
+CMD ["./start.sh"]
+
 # Build the application
 RUN CGO_ENABLED=0 GOOS=linux go build -o fitted .
 
