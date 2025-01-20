@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"net/http"
 	"github.com/austinwilson1296/fitted/internal/auth"
 )
@@ -10,17 +9,14 @@ func (cfg *ApiCfg) AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		cookie, err := r.Cookie("jwt-token")
 		if err != nil {
-			fmt.Printf("Cookie error: %v\n", err)
 			// respondWithError(w, http.StatusUnauthorized, "No valid session found", nil)
 			http.Redirect(w,r,"/login",http.StatusSeeOther)
 			return
 		}
 
-		fmt.Printf("Cookie present: %v\n", cookie != nil)
-		fmt.Printf("Cookie value: %v\n", cookie.Value)
-
+		
 		userID, err := auth.ValidateJWT(cookie.Value, cfg.JwtSecret)
-		fmt.Printf("JWT validation error: %v\n", err)
+		
 		
 		if err != nil {
 			http.Redirect(w,r,"/login",http.StatusSeeOther)
