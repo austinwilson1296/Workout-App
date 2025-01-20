@@ -6,6 +6,9 @@ WORKDIR /app
 # Install build dependencies
 RUN apk add --no-cache gcc musl-dev
 
+# Install goose
+RUN go install github.com/pressly/goose/v3/cmd/goose@latest
+
 # Copy go mod files
 COPY go.mod go.sum ./
 
@@ -26,8 +29,7 @@ WORKDIR /app
 # Install necessary runtime dependencies
 RUN apk add --no-cache tzdata
 
-# Install goose
-RUN go install github.com/pressly/goose/v3/cmd/goose@latest
+
 
 # Copy binary from builder
 COPY --from=builder /app/fitted .
