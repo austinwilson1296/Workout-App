@@ -44,4 +44,4 @@ RUN chmod +x ./scripts/db_migration.sh
 EXPOSE 8080
 
 # Run migrations and start the application
-CMD ["sh", "-c", "./scripts/db_migration && ./fitted"]
+CMD ["sh", "-c", "./scripts/db_migration.sh && ./fitted"]
