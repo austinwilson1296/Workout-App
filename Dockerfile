@@ -31,20 +31,17 @@ RUN apk add --no-cache tzdata
 
 
 
-# Copy binary from builder
+# Copy binary and project files from builder
 COPY --from=builder /app/fitted .
-
-# Copy required project files
 COPY --from=builder /app/templates ./templates
 COPY --from=builder /app/static ./static
 COPY --from=builder /app/sql ./sql
 COPY --from=builder /app/scripts ./scripts
 
-
-# Copy and set up start script
-COPY db_migrations.sh .
-RUN chmod +x db_migrations.sh
+# Ensure db_migrations script is executable
+# RUN chmod +x ./scripts/db_migrations
 
 EXPOSE 8080
 
-CMD ["./fitted"]
+# Run migrations and start the application
+CMD ["sh", "-c", "./scripts/db_migrations && ./fitted"]
