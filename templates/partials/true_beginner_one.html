@@ -12,7 +12,15 @@
 
         <!-- Exercise Selection -->
         <div class="bg-white mt-2 p-4 rounded-lg shadow">
-            <h2 class="text-xl font-bold mb-4">Select Exercises</h2>
+            <div class="flex justify-between mb-4">
+                <h2 class="text-xl font-bold">Select Exercises</h2>
+                <span>
+                    <button class="bg-blue-200 text-black p-2 rounded" onclick="grey_out_selection_core()">Core</button>
+                    <button class="bg-blue-200 text-black p-2 rounded">Balance</button>
+                    <button class="bg-blue-200 text-black p-2 rounded">Resistance</button>
+                </span>
+            </div>
+
             <div class="grid grid-cols-4 gap-2">
                 <button class="bg-blue-200 text-black p-2 rounded" onclick="beginnerChest();">Chest</button>
                 <button class="bg-blue-200 text-black p-2 rounded" onclick="beginnerBack();">Back</button>
@@ -42,7 +50,9 @@
         <div class="bg-white mt-2 p-4 rounded-lg shadow">
             <h2 class="text-xl font-bold mb-4">Your Workout</h2>
             <ul id="selected-exercises" class="list-disc pl-5">
-                <!-- Exercises will be added here -->
+            <h2>Core</h2>
+                <li class="core-selected"></li>
+            
             </ul>
         </div>
 
@@ -66,3 +76,17 @@
         </div>
     </div>
 </div>
+<script>
+function grey_out_selection_core(){
+    // Only target buttons in the exercise selection area
+    const exerciseButtons = document.querySelectorAll("#workoutArea button");
+    exerciseButtons.forEach(button => {
+        if (button.textContent.trim() !== "Core" && button.textContent.trim() !== "Submit") {
+            button.classList.add("bg-gray-200", "text-gray-500");
+            // Remove original styling
+            button.classList.remove("bg-blue-200", "text-black");
+            button.disabled = true;
+        }
+    });
+}
+</script>
